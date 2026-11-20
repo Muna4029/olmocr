@@ -213,7 +213,7 @@ async def apost(url, json_data):
 
 
 async def process_page(args, worker_id: int, pdf_orig_path: str, pdf_local_path: str, page_num: int) -> PageResult:
-    if args.server:
+    if hasattr(args, "server") and args.server:
         COMPLETION_URL = f"{args.server.rstrip('/')}/v1/chat/completions"
     else:
         COMPLETION_URL = f"http://localhost:{BASE_SERVER_PORT}/v1/chat/completions"
@@ -905,7 +905,7 @@ def submit_beaker_job(args):
 def print_stats(args, root_work_queue):
     LONG_CONTEXT_THRESHOLD = 32768
 
-    assert args.workspace.startswith("s3://"), "Printing stats functionality only works with s3 workspaces for now."
+    assert hasattr(args, "workspace") and args.workspace.startswith("s3://"), "Printing stats functionality only works with s3 workspaces for now."
 
     # Get total work items and completed items
     index_file_s3_path = os.path.join(args.workspace, "work_index_list.csv.zstd")
@@ -1076,7 +1076,9 @@ async def main():
     vllm_group.add_argument("--data-parallel-size", "-dp", type=int, default=1, help="Data parallel size for vLLM")
     vllm_group.add_argument("--port", type=int, default=30024, help="Port to use for the VLLM server")
     vllm_group.add_argument(
-        "--server", type=str, help="URL of external vLLM (or other compatible provider) server (e.g., http://hostname:port). If provided, skips spawning local vLLM instance"
+        "--server",
+        type=str,
+        help="URL of external vLLM (or other compatible provider) server (e.g., http://hostname:port). If provided, skips spawning local vLLM instance",
     )
 
     # Beaker/job running stuff

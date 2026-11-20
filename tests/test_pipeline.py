@@ -192,6 +192,7 @@ class MockArgs:
     max_page_retries: int = 8
     target_longest_image_dim: int = 1288
     guided_decoding: bool = False
+    server: str = 'http://localhost:8000'
 
 
 class TestRotationCorrection:
@@ -204,6 +205,7 @@ class TestRotationCorrection:
 
         # Mock arguments
         args = MockArgs()
+        args.server = 'http://localhost:8000'
 
         # Counter to track number of API calls
         call_count = 0
