@@ -273,6 +273,7 @@ This is the corrected text from the document."""
             return await original_build_page_query(local_pdf_path, page, target_longest_image_dim, image_rotation, model_name)
 
         with patch("olmocr.pipeline.apost", side_effect=mock_apost):
+            async def mock_apost(url, json_data, api_key=None):
             with patch("olmocr.pipeline.tracker", mock_tracker):
                 with patch("olmocr.pipeline.build_page_query", side_effect=mock_build_page_query):
                     result = await process_page(args=args, worker_id=0, pdf_orig_path="test-edgar-rotated90.pdf", pdf_local_path=test_pdf_path, page_num=1)
@@ -280,7 +281,7 @@ This is the corrected text from the document."""
         # Verify the result
         assert isinstance(result, PageResult)
         assert result.page_num == 1
-        assert result.is_fallback == False
+        assert result.is_fallback is False
         assert result.response.is_rotation_valid == True
         assert result.response.rotation_correction == 0
         assert result.response.natural_text is not None
@@ -388,7 +389,7 @@ Document is now correctly oriented after 180 degree rotation."""
         # Verify the result
         assert isinstance(result, PageResult)
         assert result.page_num == 1
-        assert result.is_fallback == False
+        assert result.is_fallback is False
         assert result.response.is_rotation_valid == True
         assert result.response.rotation_correction == 0
         assert result.response.natural_text is not None
